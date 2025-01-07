@@ -85,9 +85,10 @@ fn main() -> Result<()> {
             extract_all_file_from_folder(PathBuf::from(path), ignore_dires).expect("ERROR:");
 
         for file in files {
+            
             let content: String = read_file_content_as_string(&file).unwrap_or_else(|err| {
                 eprintln!("ERROR: could not read -> {file}\n{err}");
-                exit(1)
+                "".to_string()
             });
             todos.append(&mut todo::parce_todo(&file, &content, todo_regex_exp));
         }
