@@ -16,7 +16,7 @@ fn read_file_content_as_string(file_path: &str) -> Result<String> {
 /// print usage
 fn print_usage(app_location: &str) {
     eprintln!("USAGE: {app_location} <Directory/file> <Option>     To See all the TODOs.");
-    eprintln!("     Option: -s or --sort                           To Sort the TODOs.");
+    eprintln!("       Option: -s or --sort                         To Sort the TODOs.");
 }
 
 fn extract_all_file_from_folder(path: PathBuf, ignore_dir: Vec<&str>) -> Result<Vec<String>> {
@@ -58,7 +58,7 @@ fn main() -> Result<()> {
         print_usage(&args[0]);
         exit(10);
     }
-    
+
     let path: &str = &args[1];
     let file_type = fs::metadata(path)
         .expect(&format!("ERROR: Can't Open {path}"))
@@ -78,9 +78,9 @@ fn main() -> Result<()> {
         todos.append(&mut todo::parce_todo(file_path, &content, todo_regex_exp));
     } else if file_type.is_dir() {
         // for dir
-        //TODOOOO: add a directory support
 
-        let ignore_dires = vec!["git", "debug", "bin", "target"];
+        // dir to ignore
+        let ignore_dires = vec!["git", "debug", "bin", "target", "build"];
         let files =
             extract_all_file_from_folder(PathBuf::from(path), ignore_dires).expect("ERROR:");
 
