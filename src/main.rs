@@ -80,14 +80,13 @@ fn main() -> Result<()> {
         // for dir
 
         // dir to ignore
-        let ignore_dires = vec!["git", "debug", "bin", "target", "build"];
+        let ignore_dires = vec![".git", "debug", "bin", "target", "build"];
         let files =
             extract_all_file_from_folder(PathBuf::from(path), ignore_dires).expect("ERROR:");
 
         for file in files {
-            
-            let content: String = read_file_content_as_string(&file).unwrap_or_else(|err| {
-                eprintln!("ERROR: could not read -> {file}\n{err}");
+            let content: String = read_file_content_as_string(&file).unwrap_or_else(|_| {
+                // eprintln!("ERROR: could not read -> {file}\n{err}");
                 "".to_string()
             });
             todos.append(&mut todo::parce_todo(&file, &content, todo_regex_exp));
