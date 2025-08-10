@@ -58,7 +58,7 @@ impl TodoList {
                 let todo: Todo = Todo {
                     file_path: file_path.to_path_buf(),
                     line_number: line_number,
-                    priority: captures.name("priority").unwrap().as_str().len() as u8,
+                    priority: 1 + captures.name("priority").unwrap().as_str().len() as u8,
                     content: captures.name("body").unwrap().as_str().trim().to_string(),
                 };
 
@@ -71,14 +71,18 @@ impl TodoList {
 
     /// find todos from entire list of files
     pub fn find_from_files<I, P>(&mut self, files: I)
-    where 
+    where
         I: IntoIterator<Item = P>,
-        P: AsRef<Path> // AsRef<Path> means can be turned into a &Path
+        P: AsRef<Path>, // AsRef<Path> means can be turned into a &Path
     {
         for file in files {
             let file: &Path = file.as_ref();
             if let Err(err) = self.find_from_file(file) {
-                eprintln!("WARNING: can't find todo from \"{}\": {}", file.display(), err);
+                eprintln!(
+                    "WARNING: can't find todo from \"{}\": {}",
+                    file.display(),
+                    err
+                );
             }
         }
     }

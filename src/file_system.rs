@@ -1,5 +1,6 @@
 use crate::Config;
-use crate::{Result};
+use crate::error::Result;
+use crate::error::TgError;
 use std::io::ErrorKind;
 use std::path::{Path, PathBuf};
 
@@ -17,7 +18,13 @@ pub fn list_all_files(path: &Path, cfg: &Config) -> Result<Vec<PathBuf>> {
 
     let mut files: Vec<PathBuf> = Vec::new();
     for entry in dir {
-        let entry = entry?;
+        let entry = match entry {
+            Ok(_entry) => _entry,
+            Err(_err) => {
+                eprintln!("ERROR: can't get directory entry: {}", _err);
+                continue;
+            }
+        };
 
         //TODO: check if full path is necessary or not.
         let entry_path = entry.path(); //fs::canonicalize(entry.path())?;
@@ -28,7 +35,10 @@ pub fn list_all_files(path: &Path, cfg: &Config) -> Result<Vec<PathBuf>> {
             let mut sub_files = match list_all_files(&entry_path, cfg) {
                 Ok(files) => files,
                 Err(err) => {
-                    eprintln!("WARNING: Can't read dir `{d}`: {err}", d = entry_path.display());
+                    eprintln!(
+                        "WARNING: Can't read dir `{d}`: {err}",
+                        d = entry_path.display()
+                    );
                     continue;
                 }
             };
@@ -38,5 +48,10 @@ pub fn list_all_files(path: &Path, cfg: &Config) -> Result<Vec<PathBuf>> {
         }
     }
 
-    Ok(files)
+    if files.len() != 0 {
+        Ok(files)
+    } else {
+        let err: TgError = TgError::new("No file found in given directory");
+        Err(err.into())
+    }
 }
